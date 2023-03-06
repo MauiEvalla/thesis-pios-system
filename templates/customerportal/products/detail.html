@@ -1,0 +1,101 @@
+{% extends 'customerportal/header.html' %}
+{% load static %}
+
+{% block title %}{{ productDetail.productName }}{% endblock %}
+
+{% block content %}
+
+    {% comment %} Static CSS {% endcomment %}
+    <link rel="stylesheet" href="{% static '../static/css/pios_system/details.css' %}">
+
+    <main class="border border-1">
+        <div class="container">
+
+            <div class="itemContent">
+                <img class="center rounded-4" width="300px" alt="Responsive image" src="{{ productDetail.image.url }}">
+            </div>
+
+            <div class="itemContent itemDetails">
+                <div class="headerTitle">{{ productDetail.productName }}</div>
+                <div class="itemDescription">{{ productDetail.description | safe}}</div>
+                <div class="border border-5 border border-dark rounded-pill"></div>
+
+                {% comment %} Change this to ProductAttribute Price {% endcomment %}
+                <div class="item-variant">
+                    {% comment %} change the if logic {% endcomment %}
+                    
+                    {% if productDetail.parent == none and productDetail.parent == blank %} 
+                        {% for sizes in variants %}
+                            <a class="size-btn" href="{{ sizes.get_absolute_url }}">{{ sizes.productName }}</a>
+                        {% endfor %}
+                    {% else %}
+                        <a class="size-btn" href="{{ productDetail.parent.get_absolute_url }}">{{ productDetail.parent.productName }}</a>
+                    {% endif %}
+                </div>
+
+                <h4>Quantity</h4>
+
+                <div class="itemQuantity col-md-2">
+
+                    <div class="input-group text-center">
+                        <button id="decrementBtn" class="input-group-text decrement-btn" onclick="decQty()">-</button>
+                        <input type="number" id="qty" class="form-control qty-input bg-white text-center" disabled min="1" max="25" value="1">
+                        <button id="incrementBtn" class="input-group-text increment-btn" onclick="incQty()">+</button>
+                    </div>
+
+                    
+                    <div class="itemPrice">Php {{ productDetail.price }}</div>
+
+                </div>
+                
+                <button type="button" id="add-button" value="{{ productDetail.id }}">Add to basket</button>
+
+            </div>
+
+        </div>
+        
+    </main>
+
+    <script>
+        
+        {% comment %} Increment/Decrement Qty {% endcomment %}
+        function incQty() { 
+            if(document.getElementById("qty").value < 15) { 
+                document.getElementById("qty").value++;
+            }
+        }
+        
+        function decQty() {
+            if(document.getElementById("qty").value > 1) {
+                document.getElementById("qty").value--;
+            }
+        }
+
+        {% comment %} Add to Basket Btn {% endcomment %}
+        $(document).on('click', '#add-button', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '{% url "basket:basket_add" %}',
+                data: {
+                    productid: $('#add-button').val(),
+                    productqty: $('#qty').val(),
+                    csrfmiddlewaretoken: "{{csrf_token}}",
+                    action: 'post'
+                },
+                success: function (json) {
+                   document.getElementById("basket-qty").innerHTML = json.qty
+                },
+                error: function (xhr, errmsg, err) {}
+            });
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: 'This item has been added to your cart',
+                showConfirmButton: false,
+                timer: 1500
+            })
+        })
+    </script>
+
+{% endblock  %}

@@ -1,0 +1,52 @@
+.container {
+    margin-top: 15px;
+}
+
+img {
+    height: 105px;
+    width: 105px;
+}
+
+h5, h6 {
+    font-family: 'Poppins' sans-serif;
+    
+}
+
+h6 {
+    margin-top: 8px;
+}
+
+.bottom-card {
+    display: flex;
+    flex-direction: row;
+    padding-top: 4px;
+    border-top: 1px solid black;
+}
+
+.input-group {
+    margin-left: 20px;
+    width: 150px;
+}
+
+#update-button {
+    height: 38px;
+    font-size: 35px;
+}
+
+#delete-button {
+    position: absolute;
+    width: 200px;
+    margin-left: 675px;
+}
+
+.pageBtn {
+    border-radius: 60px;
+}
+
+/* ============================================ */
+/* EMPTY BASKET */
+.empty-basket {
+    width: 25%;
+    margin: auto;
+    font-family: 'Courier' sans-serif;
+}

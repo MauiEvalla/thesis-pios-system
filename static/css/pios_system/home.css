@@ -1,0 +1,86 @@
+/* Product Items */
+.h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    text-align: center;
+    font-size: 40px;
+    padding: 25px;
+}
+
+.content-items {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.col-sm-3 {
+    width: 400px;
+    margin-top: 25px;
+}
+
+.card {
+    margin: auto;
+    font-family: 'Poppins', sans-serif;
+    width: 325px;
+    height: 425px;
+}
+
+.card-title {
+    font-size: 24px;
+    font-weight: 600;
+    text-shadow: 2px 2px 8px #000000;
+    position: absolute;
+    margin-top: 260px;
+}
+
+.product-img {
+    filter: brightness(75%);
+}
+
+img.product-img {
+    min-height: 325px;
+    min-width: 425;
+    height: 425px;
+    width: 325px;
+    max-height: 500px;
+    max-width: 500px;
+}
+
+.viewProduct {
+    /* Design */
+    width: 125px;
+    height:40px;
+    border: 2px solid #FF7937;
+    border-radius: 10px;
+    background-color: #70AA7C;
+
+    /* Font */
+    text-align: center;
+    padding-top: 10px;
+    font-size: 12px;
+
+    /* Placement */
+    position: absolute;
+    margin-left: 175px;
+    margin-top: 350px;
+}
+
+
+/* Pagination Buttons */
+.pageBtns {
+    position: static;
+    width: 250px;
+    height: 550px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.page-item {
+    margin: auto;
+}
+
+.pageBtn {
+    border-radius: 60px;
+}

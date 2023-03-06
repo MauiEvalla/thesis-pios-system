@@ -1,0 +1,37 @@
+{% extends '../header.html' %}
+{% load static %}
+{% block title %}{{ category.name }} Products{% endblock %}
+
+{% block content %}
+
+    {% comment %} Static CSS {% endcomment %}
+    <link rel="stylesheet" href="{% static '../static/css/pios_system/home.css' %}">
+    
+    <main>
+
+        {% comment %} Header Title {% endcomment %}
+        <div class="h3">Catalogues of Sihia Cafe </div>
+        <div class="container">
+            <div class="content-items">
+                {% for categoryItem in categoryList %}
+                    <div class="col-sm-3">
+                        <a class="text-dark text-decoration-none" href="{{ categoryItem.get_absolute_url }}">
+                            <div class="card text-white" >
+                                <img src="{{ categoryItem.image.url }}" class="product-img card-img" alt="Responsive image">
+                                <div class="card-img-overlay card-inverse">
+                                    <h5 class="card-title">{{ categoryItem.name|slice:":150" }}</h5>
+                                    <div class="viewProduct">
+                                        View Catalogue
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </main>
+
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends './header.html' %}
+{% load static %}
+{% block title %}Sihia Cafe{% endblock %}
+
+{% block content %} 
+    
+    {% comment %} Static CSS {% endcomment %}
+    <link rel="stylesheet" href="{% static '../static/css/pios_system/home.css' %}">
+    
+    <main>
+
+        {% comment %} Header Title {% endcomment %}
+        <div class="h3">All Products of Sihia Cafe</div>
+                
+        <div class="container">
+            <div class="content-items">
+                {% for product in products %}
+                    <div class="col-sm-3">
+                        <a class="text-dark text-decoration-none" href="{{ product.get_absolute_url }}">
+                            <div class="card text-white">
+                                <img src="{{ product.image.url }}" class="product-img card-img" alt="Responsive image">
+                                <div class="card-img-overlay card-inverse">
+                                    <h5 class="card-title">{{ product.productName|slice:":150" }}</h5>
+                                    <div class="viewProduct">
+                                        View Product
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% comment %} pagination happens here {% endcomment %}
+        {% comment %} Note: on what context you are sending from views. {'categoryProduct': categoryProduct} always use that to paginate it {% endcomment %}
+        {% if products.has_other_pages %}
+            <div class="position-absolute top-50 end-0 translate-middle-y">
+                <div class="pageBtns">
+                    {% comment %} Previous Page Button {% endcomment %}
+                    {% if products.has_previous %}
+                        <div class="page-item">
+                            <a class="page-link" href="?page={{ products.previous_page_number }}" aria-label="Previous">
+                                <img src="{% static '../media/images/previousPage.jpg' %}" class="card-img pageBtn" aria-hidden="true" alt="Previous Page">
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="page-item disabled">
+                            <img src="{% static '../media/images/previousPage.jpg' %}" class="card-img pageBtn" aria-hidden="true" alt="Previous Page">
+                        </div>
+                    {% endif %}
+                    
+                    {% comment %} Next Page Button {% endcomment %}
+                    {% if products.has_next %}
+                        <div class="page-item">
+                            <a class="page-link" href="?page={{ products.next_page_number }}" aria-label="Next">
+                                <img src="{% static '../media/images/nextPage.jpg' %}" class="card-img pageBtn" aria-hidden="true" alt="Next Page">
+                            </a>
+                        </div>
+                    {% else %}
+                    <div class="page-item disabled">
+                        <img src="{% static '../media/images/nextPage.jpg' %}" class="card-img pageBtn" aria-hidden="true" alt="Next Page">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+    </main>
+
+{% endblock %}

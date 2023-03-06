@@ -1,0 +1,251 @@
+{% extends "../customerportal/header.html" %}
+{% load humanize %}  {% comment %} Loads the necessary package to humanize touch data{% endcomment %}
+{% load static %}
+{% block title %}Basket Summary{% endblock %}
+
+{% block content %}
+  {% comment %} Static CSS {% endcomment %}
+  <link rel="stylesheet" href="{% static '../static/css/pios_system/basket.css' %}">
+
+  <main id="basket-body">
+
+    <div class="container">
+
+      <div class="row g-3">
+
+        <div>
+
+          {% for item in basket %}
+
+          {% with product=item.product %}
+
+          <div class="card mb-3 border-0 product-item" data-index="{{product.id}}">
+            <div class="row g-0">
+              <div class="col-md-2 d-none d-md-block">
+                <img class="img-fluid mx-auto d-block" alt="Responsive image" src="{{ product.image.url }}" />
+              </div>
+              <div class="col-md-10 ps-md-5">
+                <div class="card-body p-1">
+                  <a class="text-decoration-none text-reset" href="{{item.product.get_absolute_url}}">
+                    <h5 class="card-text pb-3 fw-bold">{{product.productName}}</h5>
+                    <p class="card-text pb-3 fw-bold">Php {{product.price}}</p>
+                  </a>
+                  <div class="bottom-card">
+                    {%csrf_token%}
+
+                    <h6 class="fw-bold">Quantity</h6>
+                    <div class="input-group text-center">
+                      {% if item.qty != 1 %}
+                        <button id="update-button" data-index="{{product.id}}" class="input-group-text" value="minus">-</button>
+                      {% else %}
+                        <button id="update-button" data-index="{{product.id}}" class="input-group-text" value="minus" disabled>-</button>
+                      {% endif %}
+
+                      <input type="text" id="qty{{product.id}}" class="form-control qty-input text-center bg-white" disabled value="{{ item.qty }}">
+
+                      {% if item.qty != 15 %}
+                        <button id="update-button" data-index="{{product.id}}" class="input-group-text" value="plus">+</button>
+                      {% else %}
+                        <button id="update-button" data-index="{{product.id}}" class="input-group-text" value="plus" disabled>+</button>
+                      {% endif %}
+                    </div>
+
+                    <a type="button" id="delete-button" data-index="{{product.id}}" class="btn btn-danger fw-bold col-md-3 ps-md-10">Delete</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endwith %}
+          {% empty %}
+          <div class="container">
+            <div class="empty-basket text-center">
+              <img class="img-fluid mx-auto d-block" alt="Responsive image" src="{% static '../media/images/empty-basket.png' %}" />
+              <h2>Basket is Empty</h2>
+            </div>
+          </div>
+
+          {% endfor %}
+
+        </div>
+
+      </div>
+
+      <div class="border border-5 border border-dark"></div>
+
+      <div class="row g-3">
+        <div class="col-12 p-3 d-flex justify-content-between">
+          <div class="d-flex d-flex-inline">
+            <h2>Added Items</h2>
+          </div>
+          <div class="col-md-4 p-0">
+            <div class="d-grid gap-2">
+              {% if basket %}
+              <button  id="submit-btn" class="btn btn-success fw-bold">Checkout</button>
+              {% endif %}
+            </div>
+          </div>
+          <div class="text-end">                                                                                                               {% comment %} intcomma converts an interger to a string containing commas {% endcomment %}
+            <div class="pt-2 fw-bold h5">Total Amount: <span class="fw-bold h3">Php </span><span id="total" class="fw-bold text-success h3">{{basket.get_total_price|floatformat:2|intcomma}}</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    {% comment %} pagination happens here {% endcomment %}
+    {% comment %} Note: on what context you are sending from views. {'categoryProduct': categoryProduct} always use that to paginate it {% endcomment %}
+    {% comment %} {% if products.has_other_pages %}
+        <div class="position-absolute top-50 end-0 translate-middle-y">
+            <div class="pageBtns">
+                Previous Page Button
+                {% if products.has_previous %}
+                    <div class="page-item">
+                        <a class="page-link" href="?page={{ products.previous_page_number }}" aria-label="Previous">
+                            <img src="{% static '../media/images/previousPage.jpg' %}" class="card-img pageBtn" aria-hidden="true" alt="Previous Page">
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="page-item disabled">
+                        <img src="{% static '../media/images/previousPage.jpg' %}" class="card-img pageBtn" aria-hidden="true" alt="Previous Page">
+                    </div>
+                {% endif %}
+
+                Next Page Button
+                {% if products.has_next %}
+                    <div class="page-item">
+                        <a class="page-link" href="?page={{ products.next_page_number }}" aria-label="Next">
+                            <img src="{% static '../media/images/nextPage.jpg' %}" class="card-img pageBtn" aria-hidden="true" alt="Next Page">
+                        </a>
+                    </div>
+                {% else %}
+                <div class="page-item disabled">
+                    <img src="{% static '../media/images/nextPage.jpg' %}" class="card-img pageBtn" aria-hidden="true" alt="Next Page">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %} {% endcomment %}
+
+
+  </main>
+
+
+  <script>
+    //
+    $(document).on('click', '#submit-btn', function(e) {
+      let timerInterval
+      Swal.fire({
+        title: 'Your Order has been submitted!',
+        icon: 'success',
+        timerProgressBar: true,
+        html: 'Please just wait <b> 10 - 15minutes </b> to prepare your order',
+        timer: 3000,
+        didOpen: () => {
+          Swal.showLoading()
+          timerInterval = setInterval(() => {
+          }, 100)
+        },
+        willClose: () => {
+          clearInterval(timerInterval)
+        }
+      }).then((result) => {
+        /* Read more about handling dismissals below */
+        // after timer stop, sends the order to the server
+        if (result.dismiss === Swal.DismissReason.timer) {
+          console.log('I was closed by the timer')
+          e.preventDefault()
+          $.ajax({
+            url: "{% url 'orders:add'%}",
+            type: 'POST',
+            data: {
+              csrfmiddlewaretoken: "{{csrf_token}}",
+              action: 'post'
+            },
+            success: function (data) {
+              location.href = data.url
+            },
+            error: function (xhr, errmsg, err) {
+              console.log(err);
+            },
+          });
+        }
+      })
+    })
+
+    // Delete Item
+    $(document).on('click', '#delete-button', function (e) {
+      Swal.fire({
+        title: 'Are you sure you want to remove this?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, remove it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          e.preventDefault();
+          var prodid = $(this).data('index');
+          $.ajax({
+            type: 'POST',
+            url: '{% url "basket:basket_delete" %}',
+            data: {
+              productid: $(this).data('index'),
+              csrfmiddlewaretoken: "{{csrf_token}}",
+              action: 'post'
+            },
+            success: function (json) {
+              $('.product-item[data-index="' + prodid + '"]').remove();
+              document.getElementById("total").innerHTML = json.subtotal;
+              document.getElementById("qty" + prodid + " {{item.qty}}").innerHTML = json.qty;
+            },
+            error: function (xhr, errmsg, err) {}
+          });
+
+          // only triggers if user click remove it
+          Swal.fire(
+            'Deleted!',
+            'Product has been removed to your cart.',
+            'success'
+          )
+          $('#basket-body').load(location.href + " #basket-body"); // reloads the div
+        }
+      })
+    })
+
+    // Update Item
+    $(document).on('click', '#update-button', function (e) {
+      e.preventDefault();
+      var prodid = $(this).data('index');
+      var textVal = $(this).val(); // plus || minus text
+      var currentQtyVal = parseInt($('#qty' + prodid + " {{item.qty}}").val());
+      var newQtyVal;
+
+      if(textVal == "plus" && currentQtyVal < 15) {
+        newQtyVal = currentQtyVal + 1;
+        console.log(currentQtyVal);
+      } else if(textVal == "minus" && currentQtyVal > 1) {
+        newQtyVal = currentQtyVal - 1;
+      }
+
+      $.ajax({
+        type: 'POST',
+        url: '{% url "basket:basket_update" %}',
+        data: {
+          productid: $(this).data('index'),
+          productqty: newQtyVal,
+          csrfmiddlewaretoken: "{{csrf_token}}",
+          action: 'post'
+        },
+        success: function (json) {
+          document.getElementById("total").innerHTML = json.subtotal;
+          document.getElementById("qty" + prodid + " {{item.qty}}").innerHTML = json.qty;
+        },
+        error: function (xhr, errmsg, err) {}
+      });
+      $('#basket-body').load(location.href + " #basket-body"); // reloads the div
+    })
+
+  </script>
+
+{% endblock %}
