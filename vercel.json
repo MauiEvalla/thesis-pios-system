@@ -11,5 +11,11 @@
             "src": "/(.*)",
             "dest": "pios_system/wsgi.py"
         }
-    ]
+    ],
+    
+    "functions": {
+        "api/**/*.py": {
+          "excludeFiles": "public/**"
+        }
+      }
 }
